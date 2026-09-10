@@ -92,7 +92,8 @@ export function CopyableValue({ value, className }) {
  *
  * Without this the deposit panel is a dead end for anyone who has not already got Nile USDT: it
  * asks for a token that cannot be bought and has no obvious source. The faucet is the answer and
- * it is not discoverable from here.
+ * it is not discoverable from here. It pays any Tron address directly, the deposit address
+ * included (confirmed 2026-09-10), so there is no wallet to install first.
  *
  * Collapsed by default -- it is a one-time setup step, and expanded it would outweigh the form it
  * sits above for everyone who has already done it.
@@ -111,19 +112,19 @@ const TestnetFaucetGuide = () => (
         currency with no value — you cannot buy it, and nothing you deposit is real money.
       </p>
       <ol style={{ paddingLeft: '1.2rem', margin: '0.5rem 0' }}>
-        <li>
-          Install a Tron wallet (e.g.{' '}
-          <a href="https://www.tronlink.org/" target="_blank" rel="noopener noreferrer">TronLink</a>)
-          and switch its network to <strong>Nile</strong>. A mainnet wallet cannot see this chain.
-        </li>
+        <li>Copy the deposit address this panel shows below.</li>
         <li>
           Open the{' '}
           <a href="https://nileex.io/join/getJoinPage" target="_blank" rel="noopener noreferrer">
             Nile faucet
           </a>
-          , paste your Tron address, and request funds. It sends test TRX and test USDT.
+          , paste the address into its <strong>USDT</strong> section, pass the human check, and click
+          Obtain. It sends 1,000 test USDT straight to that address — no Tron wallet needed.
         </li>
-        <li>Come back and pay any amount to the address this panel gives you.</li>
+        <li>
+          Come back. The deposit shows up here as CLT once the treasury sees it, usually within a
+          few minutes.
+        </li>
       </ol>
       <p style={{ marginBottom: 0 }}>
         Send <strong>only Nile USDT (TRC-20)</strong>. Mainnet USDT, TRX, or any other token sent to
