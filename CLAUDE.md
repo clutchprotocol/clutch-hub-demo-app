@@ -6,7 +6,7 @@ Reference passenger/driver UI for Clutch Protocol. React 19 + Vite 6 + react-lea
 
 - `npm run dev` — starts Vite on 5173. `predev`/`prebuild` first run `npm run build --prefix ../clutch-hub-sdk-js`, so the sibling SDK repo must exist and build.
 - `npm run build` / `npm run lint` (flat-config ESLint 9, JS/JSX only) / `npm run preview`.
-- `npm run build:prod` + `scripts/deploy-prod.ps1` — swaps `package.json` for `package.prod.json`, which pins the **npm-published** SDK (`clutch-hub-sdk-js@^1.15.0`) instead of the file: link. `scripts/restore-dev.ps1` reverts. Never commit a swapped package.json.
+- There is no separate production build path. `package.prod.json`, `build:prod`, `install:prod`, and the two PowerShell deploy scripts were deleted on 2026-09-10: all four were broken (`install:prod` stripped vite before invoking it, `deploy-prod.ps1` deleted the lockfile then ran `npm ci`, `restore-dev.ps1` needed an untracked file) and the pin was stuck at SDK `^1.15.0`, which cannot resolve past the 3.0.0 wire-format break. The image build in `Dockerfile` is the production path: it copies both repos, builds the SDK, then runs `npm run build` here.
 - No tests exist in this repo.
 
 Env vars (Vite, must be prefixed `VITE_`):
@@ -57,7 +57,7 @@ Env vars (Vite, must be prefixed `VITE_`):
 ## Gotchas / conventions
 
 - **SDK is aliased to the sibling repo**: `vite.config.js` resolves `clutch-hub-sdk-js` to `../clutch-hub-sdk-js` and excludes it from `optimizeDeps` (avoids stale pre-bundles). SDK behavior changes require rebuilding the SDK — restart `npm run dev` or rerun `npm run build:sdk`.
-- **SDK version compat**: newer SDK methods must be feature-detected (`typeof sdk.method === 'function'`) with an HTTP-polling fallback, as done throughout `sdkRealtime.js`, because prod pins the published npm SDK which may lag the local repo.
+- **SDK version compat**: newer SDK methods are feature-detected (`typeof sdk.method === 'function'`) with an HTTP-polling fallback, as done throughout `sdkRealtime.js`. The original reason (a prod build pinning an older published SDK) is gone with `package.prod.json`, but keep the guards: they are what lets someone swap the path link for a registry version without the app breaking, and the fallbacks cost nothing.
 - **Leaflet icon fix**: every map-rendering component does `delete L.Icon.Default.prototype._getIconUrl` + `mergeOptions` with imported marker PNGs — keep this boilerplate when adding a map, or default markers 404 under Vite.
 - Maps in hidden panels: panels stay mounted, so guard leaflet animations (`flyTo`) with container-visibility checks (see `MapFlyToLocation` in PassengerView) — Leaflet throws on hidden/zero-size maps.
 - React 19 + StrictMode: effects run twice in dev; subscription effects must return their dispose function (all current ones do). No class components, no react-router, no CSS modules.

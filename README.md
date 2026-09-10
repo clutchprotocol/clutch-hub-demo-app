@@ -130,74 +130,25 @@ clutch-hub-demo-app/
 
 ## Using the Clutch Hub SDK
 
-This demo app uses the published [clutch-hub-sdk-js](https://www.npmjs.com/package/clutch-hub-sdk-js) npm package from the registry.
+This app depends on the SDK by path, not by version: `"clutch-hub-sdk-js": "file:../clutch-hub-sdk-js"`.
+The `predev` and `prebuild` scripts build that sibling checkout first, so the app always runs against
+the SDK source next to it. Changes to the SDK show up here after a rebuild.
 
-### 🏗️ **Development vs Production Configuration**
-
-#### **Development Setup (Current)**
-- **Configuration**: `"clutch-hub-sdk-js": "^1.3.0"`
-- **Benefits**: Gets latest features and fixes automatically
-- **Usage**: Perfect for demos and development
-
-#### **Production Setup**
-- **Configuration**: `"clutch-hub-sdk-js": "1.3.1"` (pinned version)
-- **Benefits**: Maximum stability, no unexpected updates
-- **Usage**: Critical for production deployments
-
-### 📦 **SDK Management Commands**
+The published image is built the same way. `Dockerfile` copies both repos, builds the SDK, then runs
+`npm run build` in this app, so an image is a snapshot of both checkouts rather than of an npm
+version range.
 
 ```bash
-# Development
-npm run dev              # Start with latest SDK features
-npm run update:sdk       # Update to latest SDK version
-npm run check:sdk        # Check current SDK version
-
-# Production Deployment
-.\scripts\deploy-prod.ps1    # Deploy with pinned versions
-.\scripts\restore-dev.ps1    # Restore development config
+npm run dev          # builds the SDK, then starts Vite on 5173
+npm run build        # builds the SDK, then builds this app
+npm run build:sdk    # rebuild only the SDK
+npm run check:sdk    # show which SDK is linked
 ```
 
-### 🚀 **Deployment Strategies**
-
-#### **For Development/Demo:**
-```json
-"clutch-hub-sdk-js": "^1.3.0"  // Gets: 1.3.0 → 1.x.x (latest features)
-```
-
-#### **For Production:**
-```json
-"clutch-hub-sdk-js": "1.3.1"   // Gets: Exactly 1.3.1 (maximum stability)
-```
-
-#### **For Staging:**
-```json
-"clutch-hub-sdk-js": "~1.3.1"  // Gets: 1.3.1 → 1.3.x (bug fixes only)
-```
-
-### 🔄 **Version Update Workflow**
-
-1. **Development**: Test with `^1.3.0` (latest features)
-2. **Validation**: Verify everything works correctly
-3. **Production**: Pin to specific version `1.3.1`
-4. **Monitoring**: Watch for new SDK releases
-5. **Update**: Test new version, then update production
-
-### 📋 **Available SDK Versions**
-
-- **Latest Stable**: `1.3.1` (recommended for production)
-- **Latest Features**: `^1.3.0` (recommended for development)
-- **Canary**: `@canary` (bleeding edge, for testing only)
-
-```bash
-# Check available versions
-npm view clutch-hub-sdk-js versions --json
-
-# Install specific version
-npm install clutch-hub-sdk-js@1.3.1
-
-# Install canary (latest features)
-npm install clutch-hub-sdk-js@canary
-```
+If you want to depend on the registry copy instead, install it explicitly
+(`npm install clutch-hub-sdk-js@4.1.0`) and drop the `predev`/`prebuild` hooks. Pin an exact
+version if you do: the SDK's 3.0.0 changed the signed wire format, so a range that crosses it
+produces transactions the node rejects.
 
 ---
 
