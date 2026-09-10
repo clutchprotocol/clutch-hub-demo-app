@@ -9,10 +9,8 @@
     "prebuild": "npm run build:sdk",
     "dev": "vite",
     "build": "vite build",
-    "build:prod": "npm run install:prod && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "install:prod": "npm install --production",
     "update:sdk": "npm update clutch-hub-sdk-js",
     "check:sdk": "npm list clutch-hub-sdk-js"
   },
