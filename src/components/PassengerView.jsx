@@ -290,6 +290,28 @@ const RideRequestCard = ({
           <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>No offers yet.</p>
         )}
 
+        {/*
+          Readiness item H1. Accepting is the moment the whole fare leaves the passenger and is
+          held for the trip, and it is the moment the passenger gives up the recourse a card
+          network would have provided. Neither of those was stated anywhere.
+          Shown with the offers rather than in a modal: for play money, a dialog demanding
+          acknowledgement of "you have no recourse" is theatre, and it trains people to click
+          through exactly the dialog that would matter on a real deployment. A real deployment
+          needs acknowledgement rather than display — see the readiness doc.
+        */}
+        {offers.length > 0 && (
+          <div
+            className="status-banner info"
+            role="note"
+            style={{ padding: '0.5rem 0.6rem', fontSize: '0.75rem', marginBottom: '0.5rem', textAlign: 'left', lineHeight: 1.5 }}
+          >
+            Accepting holds the full fare on chain straight away. You sign the payment yourself, so
+            there is no card issuer to reverse it and <strong>no arbitration if you and the driver
+            disagree</strong> — dispute resolution is not built yet. Either side can cancel before
+            the fare is fully paid, and the unpaid part returns to you.
+          </div>
+        )}
+
         {offers.map((offer) => (
           <div key={offer.txHash} className="offer-row offer-row--driver">
             <div className="offer-row-driver">
