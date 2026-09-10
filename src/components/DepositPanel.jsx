@@ -20,6 +20,22 @@ function timeAgo(timestamp) {
   return new Date(timestamp).toLocaleDateString();
 }
 
+/** When the money landed, which is not when this row appeared.
+ *
+ * `transfer_at` is the TRC-20 event's own block time — what a user means by "when did I send
+ * this". `created_at` is when the poller noticed, and the two are days apart whenever an address
+ * is polled for the first time after a database reset: deposit addresses are permanent, so an old
+ * transfer still sitting at one becomes a brand-new row. On stage that rendered a six-day-old
+ * 50 USDT deposit as "7m ago", which reads as a second deposit the user never made.
+ *
+ * Rows that settled before the orchestrator recorded `transfer_at` have only the row's age to
+ * offer, so they say `seen` instead of passing it off as the transfer's. Saying nothing at all
+ * would be worse — the hash beside it is the only other clue to which deposit this is. */
+function depositTime(d) {
+  if (d.transfer_at) return timeAgo(new Date(d.transfer_at).getTime());
+  return `seen ${timeAgo(new Date(d.created_at).getTime())}`;
+}
+
 /** Per the status table in
  * `clutch-treasury/docs/superpowers/specs/2026-09-04-deposit-history-panel-design.md` — the API
  * keeps returning the raw backend status; this is where (and only where) it becomes a word a user
@@ -273,7 +289,7 @@ const DepositPanel = ({ userProfile, open }) => {
                 {DEPOSIT_STATUS_LABELS[d.status] ?? d.status}
               </span>
               <span style={{ color: 'var(--text-secondary)' }}>
-                {timeAgo(new Date(d.created_at).getTime())}
+                {depositTime(d)}
               </span>
               <span style={{ color: 'var(--text-muted)' }}>{truncHash(d.tron_tx_id)}</span>
             </div>
