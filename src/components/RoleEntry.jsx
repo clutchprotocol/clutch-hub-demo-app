@@ -1,5 +1,6 @@
 import React from 'react';
 import { WalletBar } from './layout';
+import KeyStorageNotice from './KeyStorageNotice';
 
 const ROLE_STORAGE_KEY = 'clutch_demo_role';
 
@@ -64,6 +65,8 @@ const RoleEntry = ({
         </div>
       ) : (
         <div className="role-entry-wallet">
+          {/* Before the key exists, not after — see KeyStorageNotice for why here. */}
+          <KeyStorageNotice />
           <WalletBar
             role={selectedRole}
             userProfile={userProfile}

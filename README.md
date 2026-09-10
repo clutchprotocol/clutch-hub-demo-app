@@ -98,10 +98,24 @@ Or use [clutch-deploy](https://github.com/clutchprotocol/clutch-deploy) with `--
 To develop against a local `clutch-hub-sdk-js` clone, use npm link (see the [SDK repo](https://github.com/clutchprotocol/clutch-hub-sdk-js)), or temporarily run `npm install ../clutch-hub-sdk-js` from this directory if the SDK folder sits next to the demo app.
 
 ### Local Storage
-The application uses the following localStorage keys:
-- `clutchPublicKey`: User's public key
-- `clutchPrivateKey`: User's private key (if "remember keys" is enabled)
-- `clutch_tx_[publicKey]`: Transaction history for a specific user
+
+> **This is a demo, not a wallet.** Keys are generated in the browser and stored in
+> `localStorage` **in plain text** — readable by any script on the page, any browser extension,
+> and anyone else using the same computer. Clearing site data deletes them irrecoverably. That is
+> an acceptable trade for a testnet whose CLT has no value, and it is not acceptable for anything
+> else. Never put real funds behind a key created here.
+>
+> **If you are building on Clutch, do not copy this pattern.** The SDK signs locally, so a
+> hardware wallet, an OS keychain or an external signer substitutes in without changing how
+> transactions are built or submitted. See
+> [Mainnet Readiness](https://docs.clutchprotocol.io/reference/mainnet-readiness) item F1.
+
+Keys are role-scoped, so a passenger and a driver on the same browser are separate accounts:
+
+- `clutch_{passenger|driver}_publicKey` — the account address
+- `clutch_{passenger|driver}_privateKey` — the private key, in plain text
+- `clutch_demo_role`, `clutch_demo_theme` — which role and theme were last used
+- `clutch_tx_{publicKey}` — the last ~10 local transaction records, for the history panel
 
 ## Best Practices
 
