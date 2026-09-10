@@ -66,7 +66,7 @@ function saveRedemption(publicKey, record) {
  * `formatUsd` FLOORS to cents, and a burn amount has to display exactly — this number is what
  * gets destroyed. Both read the same 1e6 scale (`formatUsd` divides by 10,000 to cents and then
  * by 100 to dollars), which is the scale `parseUsdToClt` produces and the scale the
- * orchestrator's own bounds are written in (`min_redemption_clt = 1000000`, i.e. 1 CLT). */
+ * orchestrator's own bounds are written in (`min_redemption_clt = 10000000`, i.e. 10 CLT). */
 function formatCltAmount(baseUnits) {
   try {
     const [whole, frac] = formatExactUsdt(baseUnits).split('.');
